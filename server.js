@@ -15,7 +15,7 @@ const allowedOrigins = [
   'http://localhost:3000',           // Alternative local port
   'https://swe-ai-crop.vercel.app',  // Production Vercel deployment
   process.env.CORS_ORIGIN            // Additional origin from env if specified
-].filter(Boolean); // Remove any undefined values
+].filter(Boolean);
 
 app.use(cors({
   origin: function (origin, callback) {
