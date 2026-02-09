@@ -20,13 +20,17 @@ class LLMService {
 
     /**
      * Generate crop disease advice using Gemini AI
-     * @param {Object} diseaseData - { crop, disease, severity, confidence }
+     * @param {Object} diseaseData - { crop, disease, severity, confidence, language }
      * @returns {Promise<Object>} - Structured advice object
      */
     async generateCropAdvice(diseaseData) {
-        const { crop, disease, severity, confidence } = diseaseData;
+        const { crop, disease, severity, confidence, language = 'en' } = diseaseData;
 
-        // Create the prompt
+        // Import language utility
+        const { getLanguageName } = await import('../utils/languageUtil.js');
+        const languageName = getLanguageName(language);
+
+        // Create the prompt with language support
         const prompt = `You are an expert agricultural advisor. A farmer has a ${crop} plant infected with ${disease}. The severity is ${severity} and detection confidence is ${(confidence * 100).toFixed(0)}%.
 
 Provide concise, practical advice in the following exact format (keep each point to one short sentence):
@@ -43,10 +47,10 @@ ORGANIC: [One natural remedy]
 
 PREVENTION: [One simple tip to avoid future occurrence]
 
-Keep the language simple and practical for farmers. Focus on actionable advice. If confidence is below 60%, mention a mild caution in the IMMEDIATE step.`;
+IMPORTANT: Respond ENTIRELY in ${languageName} language. All headings (CAUSE, SYMPTOMS, IMMEDIATE, CHEMICAL, ORGANIC, PREVENTION) should remain in English for parsing, but ALL the content/advice for each section must be written in ${languageName}. Keep the language simple and practical for farmers. Focus on actionable advice. If confidence is below 60%, mention a mild caution in the IMMEDIATE step.`;
 
         try {
-            console.log(`🤖 Generating AI advice for ${crop} - ${disease}...`);
+            console.log(`🤖 Generating AI advice for ${crop} - ${disease} in ${languageName}...`);
 
             const response = await this.ai.models.generateContent({
                 model: this.modelName,
