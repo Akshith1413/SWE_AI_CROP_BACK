@@ -17,7 +17,7 @@ const router = express.Router();
  */
 router.post('/crop-advice', async (req, res) => {
     try {
-        const { crop, disease, severity, confidence } = req.body;
+        const { crop, disease, severity, confidence, language } = req.body;
 
         // Validate input
         if (!crop || !disease) {
@@ -35,14 +35,15 @@ router.post('/crop-advice', async (req, res) => {
             });
         }
 
-        console.log(`📝 Request: Generating advice for ${crop} - ${disease}`);
+        console.log(`📝 Request: Generating advice for ${crop} - ${disease} in ${language || 'en'}`);
 
-        // Generate advice using Gemini AI
+        // Generate advice using Gemini AI with specified language
         const advice = await llmService.generateCropAdvice({
             crop,
             disease,
             severity: severity || 'unknown',
-            confidence: confidence || 0.0
+            confidence: confidence || 0.0,
+            language: language || 'en'  // Pass language to LLM service (default: English)
         });
 
         res.json({
