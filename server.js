@@ -1,15 +1,16 @@
+// Backend server for CropAId - handles LLM crop advice generation
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
-dotenv.config(); // load .env
+// Load environment variables from .env file
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware - CORS Configuration
-// Allow multiple origins for both development and production
+// CORS middleware - allows frontend to communicate with backend
 const allowedOrigins = [
   'http://localhost:5173',           // Local development
   'http://localhost:3000',           // Alternative local port
@@ -34,23 +35,26 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// Parse JSON request bodies
 app.use(express.json());
 
-// Use env variable for MongoDB connection
+// Connect to MongoDB database
 const mongoURI = process.env.MONGO_URL;
 
 mongoose.connect(mongoURI)
   .then(() => console.log('✓ Connected to MongoDB'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// Routes (using dynamic import for ES modules)
+// Mount API routes
 import cropAdviceRoutes from './routes/cropAdvice.js';
 app.use('/api', cropAdviceRoutes);
 
+// Root endpoint for health check
 app.get('/', (req, res) => {
   res.send('SWE AI Crop Backend - API Running');
 });
 
+// Start the server and log available endpoints
 app.listen(PORT, () => {
   const serverUrl = process.env.NODE_ENV === 'production'
     ? 'https://swe-ai-crop-back.onrender.com'
@@ -58,6 +62,6 @@ app.listen(PORT, () => {
 
   console.log(`\n✓ Server running at ${serverUrl}`);
   console.log(`✓ API endpoints available at:`);
-  console.log(`  - POST ${serverUrl}/api/crop-advice`);
+  console.log(` - POST ${serverUrl}/api/crop-advice`);
   console.log(`  - GET  ${serverUrl}/api/test\n`);
 });
