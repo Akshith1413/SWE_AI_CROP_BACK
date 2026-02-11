@@ -21,43 +21,19 @@ The system integrates **Computer Vision + Generative AI** into a single API.
 ## 🧠 System Pipeline
 
 Upload image
-↓
+     ↓
 Node Backend API
-↓
+     ↓
 FastAPI CNN Service
-↓
+     ↓
 Disease prediction
-↓
+     ↓
 Gemini AI Advisory
-↓
+     ↓
 Single JSON response
 
 
----
-
-## 🧰 Tech Stack
-
-### Backend API
-- Node.js
-- Express.js
-- Axios
-- Multer
-
-### AI Inference Service
-- FastAPI
-- TensorFlow / Keras
-- Pillow
-- NumPy
-
-### AI Advisory
-- Google Gemini API (@google/genai)
-
----
-
-## 🏗️ Project Structure
-
-
----
+----
 
 ## 🧰 Tech Stack
 
@@ -127,6 +103,7 @@ Response example:
   "success": false,
   "message": "Uploaded image does not appear to be a plant leaf"
 }
+```
 AI Advisory System
 
 Uses Gemini AI to generate:
@@ -185,12 +162,7 @@ python -m uvicorn app:app --reload --port 5001
 Start backend server
 npm start
 
-🔑 Environment Variables
 
-Create .env in the root folder:
-
-GEMINI_API_KEY=your_api_key_here
-MONGO_URL=your_mongodb_connection
 
 🧪 Test Script
 
@@ -242,6 +214,7 @@ Bhuvaneshwari	DevOps Engineer
 Ramaroshinee	Full Stack Developer
 Akshith	Frontend Developer
 Saketh	Testing Engineer
+
 🔮 Future Improvements
 
 Docker deployment
