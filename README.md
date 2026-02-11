@@ -20,17 +20,18 @@ The system integrates **Computer Vision + Generative AI** into a single API.
 
 ## 🧠 System Pipeline
 
-Upload image
-     ↓
-Node Backend API
-     ↓
-FastAPI CNN Service
-     ↓
-Disease prediction
-     ↓
-Gemini AI Advisory
-     ↓
+Upload image  
+↓  
+Node Backend API  
+↓  
+FastAPI CNN Service  
+↓  
+Disease prediction  
+↓  
+Gemini AI Advisory  
+↓  
 Single JSON response
+
 
 
 ----
@@ -59,22 +60,23 @@ Single JSON response
 SWE_AI_CROP_BACK
 │
 ├── ai_service/
-│ ├── app.py
-│ ├── class_names.py
-│ ├── model.weights.h5
-│ └── requirements.txt
+│   ├── app.py
+│   ├── class_names.py
+│   ├── model.weights.h5
+│   └── requirements.txt
 │
 ├── routes/
-│ └── cropAdvice.js
+│   └── cropAdvice.js
 │
 ├── services/
-│ ├── cnnService.js
-│ └── llmService.js
+│   ├── cnnService.js
+│   └── llmService.js
 │
 ├── server.js
 ├── test_upload.py
 ├── package.json
 └── .env
+
 
 
 ---
@@ -104,35 +106,35 @@ Response example:
   "message": "Uploaded image does not appear to be a plant leaf"
 }
 ```
-AI Advisory System
+## 🤖 AI Advisory System
 
 Uses Gemini AI to generate:
 
-Cause
+- Cause
+- Symptoms
+- Immediate action
+- Chemical treatment
+- Organic treatment
+- Prevention
 
-Symptoms
+---
 
-Immediate action
+## 🔌 API Endpoints
 
-Chemical treatment
-
-Organic treatment
-
-Prevention
-
-🔌 API Endpoints
-Test Backend
+### Test Backend
 GET /api/test
 
-Crop Disease Detection + Advice
+### Crop Disease Detection + Advice
 POST /api/crop-advice
 
-
 Form-data:
-
 file → image
 
-Example Response
+---
+
+## 📦 Example Response
+
+```json
 {
   "success": true,
   "disease": "Leaf_Mold",
@@ -146,89 +148,80 @@ Example Response
     "prevention": "..."
   }
 }
+```
 
-▶️ Running Locally
-Install Node dependencies
+
+## ▶️ Running Locally
+
+Follow these steps to run the backend and CNN inference service.
+
+---
+
+### 1. Install Node dependencies
+
+From the project root:
+
+```bash
 npm install
 
-Install Python dependencies
 cd ai_service
 pip install -r requirements.txt
-
-Start CNN service
-cd ai_service
 python -m uvicorn app:app --reload --port 5001
 
-Start backend server
-npm start
+Uvicorn running on http://127.0.0.1:5001
+
+Expected response:
+
+{
+  "success": true,
+  "disease": "Leaf_Mold",
+  "confidence": 0.99,
+  "advice": { ... }
+}
+```
+
+---
+
+## 🔮 Future Improvements
+
+- Dockerized deployment
+- Offline CNN inference support
+- Confidence calibration for predictions
+- Model quantization for mobile devices
+- Region-specific crop advisory tuning
+- Logging and monitoring
+- Model retraining pipeline
+
+---
+
+## 🤝 Contributing
+
+This project is part of the SWE AI Crop system.  
+Contributions, suggestions, and improvements are welcome.
+
+To contribute:
+
+1. Fork the repository
+2. Create a new branch
+3. Make changes
+4. Submit a pull request
+
+---
+
+## 👨‍💻 Contributors
+
+| Name | Role |
+|------|------|
+| Dhanuja | Backend Engineer |
+| Bhuvaneshwari | DevOps Engineer |
+| Ramaroshinee | Full Stack Developer |
+| Akshith | Frontend Developer |
+| Saketh | Testing Engineer |
+
+---
+
+## 🌾 Vision
+
+Build an AI-powered agriculture assistant that helps farmers detect crop diseases early and receive clear, actionable treatment guidance.
 
 
-
-🧪 Test Script
-
-You can test the full pipeline using:
-
-python test_upload.py
-
-📊 Dataset
-
-Model trained using:
-
-PlantVillage Dataset
-https://www.kaggle.com/datasets/emmarex/plantdisease
-
-Supported crops include:
-
-Apple
-
-Corn
-
-Grape
-
-Potato
-
-Tomato
-
-Pepper
-
-Strawberry
-
-Peach
-
-Orange
-
-Squash
-
-Soybean
-
-Raspberry
-
-Blueberry
-
-Cherry
-
-👨‍💻 Contributors
-Name	Role
-Dhanuja	Backend Engineer
-Bhuvaneshwari	DevOps Engineer
-Ramaroshinee	Full Stack Developer
-Akshith	Frontend Developer
-Saketh	Testing Engineer
-
-🔮 Future Improvements
-
-Docker deployment
-
-Offline CNN inference
-
-Confidence calibration
-
-Model quantization
-
-Regional crop advisory tuning
-
-Logging and monitoring
-
-🌾 Vision
-
-Build an AI-powered agriculture assistant that enables farmers to detect crop diseases quickly and receive understandable treatment guidance.
