@@ -40,18 +40,35 @@ model.load_weights("model.weights.h5")
 
 print("CNN READY")
 
+# ---------- LEAF VALIDATION ----------
+def is_leaf_image(image):
+    arr = np.array(image)
+    r, g, b = arr[:,:,0], arr[:,:,1], arr[:,:,2]
+    green_pixels = np.sum((g > r) & (g > b))
+    total_pixels = arr.shape[0] * arr.shape[1]
+    return (green_pixels / total_pixels) > 0.08
+# -------------------------------------
+
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     contents = await file.read()
     image = Image.open(io.BytesIO(contents)).convert("RGB")
-    image = image.resize((IMG_SIZE, IMG_SIZE))
 
+    # leaf validation
+    if not is_leaf_image(image):
+        return {
+            "success": False,
+            "error": "Uploaded image does not appear to be a plant leaf"
+        }
+
+    image = image.resize((IMG_SIZE, IMG_SIZE))
     img = np.array(image)
     img = np.expand_dims(img, axis=0)
 
     pred = model.predict(img)
 
     return {
+        "success": True,
         "class_index": int(np.argmax(pred)),
         "confidence": float(np.max(pred))
     }
