@@ -20,17 +20,18 @@ The system integrates **Computer Vision + Generative AI** into a single API.
 
 ## 🧠 System Pipeline
 
-Upload image
-     ↓
-Node Backend API
-     ↓
-FastAPI CNN Service
-     ↓
-Disease prediction
-     ↓
-Gemini AI Advisory
-     ↓
+Upload image  
+↓  
+Node Backend API  
+↓  
+FastAPI CNN Service  
+↓  
+Disease prediction  
+↓  
+Gemini AI Advisory  
+↓  
 Single JSON response
+
 
 ----
 
@@ -58,22 +59,23 @@ Single JSON response
 SWE_AI_CROP_BACK
 │
 ├── ai_service/
-│ ├── app.py
-│ ├── class_names.py
-│ ├── model.weights.h5
-│ └── requirements.txt
+│   ├── app.py
+│   ├── class_names.py
+│   ├── model.weights.h5
+│   └── requirements.txt
 │
 ├── routes/
-│ └── cropAdvice.js
+│   └── cropAdvice.js
 │
 ├── services/
-│ ├── cnnService.js
-│ └── llmService.js
+│   ├── cnnService.js
+│   └── llmService.js
 │
 ├── server.js
 ├── test_upload.py
 ├── package.json
 └── .env
+
 
 
 
