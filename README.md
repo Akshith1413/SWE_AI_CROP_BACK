@@ -21,15 +21,15 @@ The system integrates **Computer Vision + Generative AI** into a single API.
 ## 🧠 System Pipeline
 
 Upload image  
-↓  
+    ↓  
 Node Backend API  
-↓  
+    ↓  
 FastAPI CNN Service  
-↓  
+    ↓  
 Disease prediction  
-↓  
+    ↓  
 Gemini AI Advisory  
-↓  
+    ↓  
 Single JSON response
 
 
