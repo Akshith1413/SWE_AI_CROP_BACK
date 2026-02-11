@@ -54,27 +54,8 @@ Single JSON response
 
 ---
 
-## 🏗️ Project Structure
+<img width="308" height="465" alt="image" src="https://github.com/user-attachments/assets/df9300cc-ba68-4360-84be-c5ee92411ff9" />
 
-SWE_AI_CROP_BACK
-│
-├── ai_service/
-│   ├── app.py
-│   ├── class_names.py
-│   ├── model.weights.h5
-│   └── requirements.txt
-│
-├── routes/
-│   └── cropAdvice.js
-│
-├── services/
-│   ├── cnnService.js
-│   └── llmService.js
-│
-├── server.js
-├── test_upload.py
-├── package.json
-└── .env
 
 
 
