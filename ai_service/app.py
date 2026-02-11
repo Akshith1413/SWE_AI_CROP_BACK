@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, UploadFile, File
 import tensorflow as tf
 import numpy as np
 from PIL import Image
@@ -6,45 +6,52 @@ import io
 
 app = FastAPI()
 
-
-MODEL_PATH = "crop_disease_model.keras"   
-
-model = tf.keras.models.load_model(MODEL_PATH)
-
-
-CLASS_NAMES = [
-    "Tomato_Early_blight",
-    "Tomato_Late_blight",
-    "Tomato_Healthy"
-]
-
 IMG_SIZE = 224
+NUM_CLASSES = 38
 
+print("Loading CNN model...")
 
-def preprocess(img):
+data_augmentation = tf.keras.Sequential([
+    tf.keras.layers.RandomFlip("horizontal"),
+    tf.keras.layers.RandomRotation(0.1),
+])
 
-    img = img.resize((IMG_SIZE, IMG_SIZE))
-    img = np.array(img) / 255.0
-    img = np.expand_dims(img, axis=0)
+normalization = tf.keras.layers.Rescaling(1./255)
 
-    return img
+base_model = tf.keras.applications.MobileNetV2(
+    input_shape=(IMG_SIZE, IMG_SIZE, 3),
+    include_top=False,
+    weights="imagenet"
+)
 
+base_model.trainable = False
+
+model = tf.keras.Sequential([
+    data_augmentation,
+    normalization,
+    base_model,
+    tf.keras.layers.GlobalAveragePooling2D(),
+    tf.keras.layers.Dropout(0.3),
+    tf.keras.layers.Dense(NUM_CLASSES, activation="softmax")
+])
+
+model(np.zeros((1, IMG_SIZE, IMG_SIZE, 3)))
+model.load_weights("model.weights.h5")
+
+print("CNN READY")
 
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
+    contents = await file.read()
+    image = Image.open(io.BytesIO(contents)).convert("RGB")
+    image = image.resize((IMG_SIZE, IMG_SIZE))
 
-    data = await file.read()
+    img = np.array(image)
+    img = np.expand_dims(img, axis=0)
 
-    img = Image.open(io.BytesIO(data)).convert("RGB")
-
-    img = preprocess(img)
-
-    preds = model.predict(img)
-
-    idx = np.argmax(preds)
-    conf = float(np.max(preds))
+    pred = model.predict(img)
 
     return {
-        "disease": CLASS_NAMES[idx],
-        "confidence": round(conf, 3)
+        "class_index": int(np.argmax(pred)),
+        "confidence": float(np.max(pred))
     }
