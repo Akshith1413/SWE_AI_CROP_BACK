@@ -1,63 +1,111 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import dotenv from 'dotenv';
+/**
+ * Express Server Configuration
+ * Main backend server for CropAId application
+ * Handles API routing, CORS, database connection, and middleware setup
+ * Serves crop disease detection and treatment advice endpoints
+ */
 
-dotenv.config(); // load .env
+// Import required dependencies
+import express from 'express';      // Web framework for Node.js
+import mongoose from 'mongoose';    // MongoDB object modeling tool
+import cors from 'cors';            // Enable Cross-Origin Resource Sharing
+import dotenv from 'dotenv';        // Load environment variables from .env file
 
+// Load environment variables from .env file into process.env
+dotenv.config();
+
+// Initialize Express application
 const app = express();
+
+// Server port - use environment variable or default to 3000
+// Hosting platforms like Render.com provide PORT via environment
 const PORT = process.env.PORT || 3000;
 
-// Middleware - CORS Configuration
-// Allow multiple origins for both development and production
-const allowedOrigins = [
-  'http://localhost:5173',           // Local development
-  'http://localhost:3000',           // Alternative local port
-  'https://swe-ai-crop.vercel.app',  // Production Vercel deployment
-  process.env.CORS_ORIGIN            // Additional origin from env if specified
-].filter(Boolean);
+// ========================================
+// Middleware Configuration
+// ========================================
 
+// CORS (Cross-Origin Resource Sharing) Configuration
+// Allows frontend applications from specific origins to access this API
+// Prevents unauthorized domains from making requests to our backend
+const allowedOrigins = [
+  'http://localhost:5173',           // Vite development server (npm run dev)
+  'http://localhost:3000',           // Alternative local development port
+  'https://swe-ai-crop.vercel.app',  // Production frontend deployment on Vercel
+  process.env.CORS_ORIGIN            // Additional custom origin from environment variable
+].filter(Boolean); // Remove null/undefined values (if CORS_ORIGIN not set)
+
+// Apply CORS middleware with custom origin validation
 app.use(cors({
+  // Dynamic origin validation function
+  // Checks if incoming request origin is in allowedOrigins list
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, Postman, or curl)
+    // Allow requests with no origin (mobile apps, Postman, curl, server-to-server)
     if (!origin) return callback(null, true);
 
+    // Check if the request origin is in our allowed list
     if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
+      callback(null, true); // Allow the request
     } else {
+      // Reject requests from unauthorized origins
       console.log(`CORS blocked request from origin: ${origin}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  credentials: true, // Allow cookies and authorization headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'] // Allowed request headers
 }));
 
+// JSON body parser middleware
+// Parses incoming requests with JSON payloads
+// Makes req.body available with parsed JSON data
 app.use(express.json());
 
-// Use env variable for MongoDB connection
+// ========================================
+// Database Connection
+// ========================================
+
+// Get MongoDB connection string from environment variable
+// This keeps sensitive credentials out of the source code
 const mongoURI = process.env.MONGO_URL;
 
+// Connect to MongoDB database
+// Uses Mongoose for object modeling and schema validation
 mongoose.connect(mongoURI)
   .then(() => console.log('✓ Connected to MongoDB'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// Routes (using dynamic import for ES modules)
-import cropAdviceRoutes from './routes/cropAdvice.js';
-app.use('/api', cropAdviceRoutes);
+// ========================================
+// API Routes
+// ========================================
 
+// Import and mount crop advice routes
+// Handles POST /api/crop-advice for disease detection and treatment advice
+import cropAdviceRoutes from './routes/cropAdvice.js';
+app.use('/api', cropAdviceRoutes); // Prefix all routes with /api
+
+// Root endpoint - Simple health check
+// Returns confirmation message that server is running
 app.get('/', (req, res) => {
   res.send('SWE AI Crop Backend - API Running');
 });
 
+// ========================================
+// Start Server
+// ========================================
+
+// Start Express server listening on specified PORT
 app.listen(PORT, () => {
+  // Construct server URL based on environment
+  // Production uses Render.com URL, development uses localhost
   const serverUrl = process.env.NODE_ENV === 'production'
     ? 'https://swe-ai-crop-back.onrender.com'
     : `http://localhost:${PORT}`;
 
+  // Log server information to console
   console.log(`\n✓ Server running at ${serverUrl}`);
   console.log(`✓ API endpoints available at:`);
-  console.log(`  - POST ${serverUrl}/api/crop-advice`);
-  console.log(`  - GET  ${serverUrl}/api/test\n`);
+  console.log(`  - POST ${serverUrl}/api/crop-advice`);  // Main crop advice endpoint
+  console.log(`  - GET  ${serverUrl}/api/test\n`);       // Test/health check endpoint
 });
