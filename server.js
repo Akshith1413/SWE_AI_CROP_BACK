@@ -36,9 +36,8 @@ app.use(cors({
 
 app.use(express.json());
 
-// Use env variable for MongoDB connection
+// Database Connection
 const mongoURI = process.env.MONGO_URL;
-
 mongoose.connect(mongoURI)
   .then(() => console.log('✓ Connected to MongoDB'))
   .catch(err => console.error('❌ MongoDB connection error:', err));
@@ -51,6 +50,26 @@ app.get('/', (req, res) => {
   res.send('SWE AI Crop Backend - API Running');
 });
 
+// Import new routes
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import cropRoutes from './routes/cropRoutes.js';
+import settingsRoutes from './routes/settingsRoutes.js';
+import consentRoutes from './routes/consentRoutes.js';
+import diagnosisRoutes from './routes/diagnosisRoutes.js';
+import communityRoutes from './routes/communityRoutes.js';
+import calendarRoutes from './routes/calendarRoutes.js';
+
+// Mount routes
+app.use('/api/auth', authRoutes);
+app.use('/api/user', userRoutes);
+app.use('/api/crops', cropRoutes);
+app.use('/api/settings', settingsRoutes);
+app.use('/api/consent', consentRoutes);
+app.use('/api/diagnosis', diagnosisRoutes);
+app.use('/api/community', communityRoutes);
+app.use('/api/calendar', calendarRoutes);
+
 app.listen(PORT, () => {
   const serverUrl = process.env.NODE_ENV === 'production'
     ? 'https://swe-ai-crop-back.onrender.com'
@@ -59,5 +78,6 @@ app.listen(PORT, () => {
   console.log(`\n✓ Server running at ${serverUrl}`);
   console.log(`✓ API endpoints available at:`);
   console.log(`  - POST ${serverUrl}/api/crop-advice`);
+  console.log(`  - POST ${serverUrl}/api/auth/login`);
   console.log(`  - GET  ${serverUrl}/api/test\n`);
 });

@@ -24,10 +24,19 @@ class LLMService {
      * @returns {Promise<Object>} - Structured advice object
      */
     async generateCropAdvice(diseaseData) {
-        const { crop, disease, severity, confidence } = diseaseData;
+        const { crop, disease, severity, confidence, language } = diseaseData;
+
+        // Language instruction
+        const langInstructions = {
+            'te': 'Provide the response in Telugu language (తెలుగు).',
+            'hi': 'Provide the response in Hindi language (हिंदी).',
+            'en': 'Provide the response in English language.'
+        };
+        const langInstruction = langInstructions[language] || langInstructions['en'];
 
         // Create the prompt
         const prompt = `You are an expert agricultural advisor. A farmer has a ${crop} plant infected with ${disease}. The severity is ${severity} and detection confidence is ${(confidence * 100).toFixed(0)}%.
+${langInstruction}
 
 Provide concise, practical advice in the following exact format (keep each point to one short sentence):
 
